@@ -1,0 +1,30 @@
+# Build outputs
+/bin/
+/dist/
+/streamdeckd
+/streamdeck-go
+
+# Downloaded icon assets
+/icons/
+
+# Local/runtime files
+*.log
+*.pid
+*.jpg
+*.jpeg
+*.png.tmp
+
+# Go cache/test artifacts
+*.test
+coverage.out
+
+# Python artifacts from the original prototype
+/venv/
+/.venv/
+__pycache__/
+*.pyc
+
+# Editor/OS files
+.DS_Store
+.idea/
+.vscode/

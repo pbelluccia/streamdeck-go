@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stream Deck Admin</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="pages">
+        <div class="brand">
+          <div class="mark">SD</div>
+          <div>
+            <h1>Stream Deck</h1>
+            <p>Editor</p>
+          </div>
+          <button id="reloadBtn" class="iconBtn" title="Reload">↻</button>
+        </div>
+
+        <div class="pageActions">
+          <button id="addPageBtn">New</button>
+          <button id="duplicatePageBtn">Duplicate</button>
+          <button id="renamePageBtn">Rename</button>
+          <button id="deletePageBtn" class="danger">Delete</button>
+        </div>
+
+        <nav id="pageList" class="pageList"></nav>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div class="titleBlock">
+            <span class="eyebrow">Current page</span>
+            <strong id="currentPageTitle">main</strong>
+            <span id="statusText">Loading</span>
+          </div>
+          <select id="backupSelect" title="Backups"></select>
+          <details class="settingsMenu">
+            <summary>Settings</summary>
+            <div class="settingsPopover">
+              <div class="fieldGrid two">
+                <label>Device <input id="settingDevice" placeholder="auto" /></label>
+                <label>Model <select id="settingDeckModel"></select></label>
+              </div>
+              <div class="fieldGrid two">
+                <label>Brightness <input id="settingBrightness" type="number" min="0" max="100" /></label>
+                <label>Hold ms <input id="settingHoldMS" type="number" min="1" /></label>
+              </div>
+              <div class="fieldGrid two">
+                <label>Media player <input id="settingMediaPlayer" placeholder="spotify" /></label>
+                <label>Weather refresh <input id="settingWeatherRefresh" type="number" min="1" /></label>
+              </div>
+              <label>Icon directory <input id="settingIconDir" placeholder="/path/to/icons" /></label>
+              <label>Font path <input id="settingFontPath" placeholder="/path/to/font.ttf" /></label>
+              <div class="fieldGrid two">
+                <label>Weather location <input id="settingWeatherLocation" placeholder="Buenos Aires" /></label>
+              </div>
+            </div>
+          </details>
+          <div class="topActions">
+            <button id="backupBtn">Backup</button>
+            <button id="restoreBtn">Restore</button>
+            <button id="restartBtn">Restart</button>
+            <button id="saveBtn" class="primary">Save + restart</button>
+          </div>
+        </header>
+
+        <section class="topGrid">
+          <section class="previewPanel">
+            <div class="panelTitle clean">
+              <h2>Preview</h2>
+              <span id="selectedButtonLabel">Button 0</span>
+            </div>
+            <div id="previewGrid" class="previewGrid"></div>
+          </section>
+
+          <section class="panel pagePanel compactPage">
+            <div class="panelTitle">
+              <h2>Page</h2>
+              <span>Background</span>
+            </div>
+            <div class="fieldGrid pageFields">
+              <label>Start page <select id="startPage"></select></label>
+              <label>Timeout <input id="pageTimeout" type="number" min="0" /></label>
+              <label>Background <select id="backgroundType"></select></label>
+              <label id="backgroundModeWrap">Mode <select id="backgroundMode"></select></label>
+              <label id="backgroundPlayerWrap">Media player <input id="backgroundPlayer" placeholder="spotify" /></label>
+              <label id="backgroundColorWrap">Color
+                <span class="colorPair">
+                  <input id="backgroundColorPicker" type="color" value="#111827" />
+                  <input id="backgroundColor" placeholder="#111827" />
+                </span>
+              </label>
+              <label id="backgroundPathWrap" class="wideField">Image path <input id="backgroundPath" placeholder="/path/to/background.png" /></label>
+            </div>
+            <div class="subPanel">
+              <div class="subTitle">Background effect</div>
+              <div id="backgroundEffect"></div>
+            </div>
+          </section>
+        </section>
+
+        <section class="editorGrid">
+
+          <section class="panel buttonPanel">
+            <div class="panelTitle">
+              <h2>Button</h2>
+              <span id="buttonNumber">Button 0</span>
+            </div>
+            <div class="buttonEditActions">
+              <button id="copyButtonBtn">Copy</button>
+              <button id="pasteButtonBtn">Paste</button>
+              <button id="clearButtonBtn" class="danger">Clear</button>
+            </div>
+            <div class="quickActions">
+              <button id="quickColorBtn">Color</button>
+              <button id="quickIconBtn">Icon</button>
+              <button id="quickTextBtn">Text</button>
+              <button id="quickImageBtn">Image</button>
+              <button id="quickAnimationBtn">Animation</button>
+              <button id="quickWeatherBtn">Weather</button>
+            </div>
+            <div class="actionBlock">
+              <h3>Press action</h3>
+              <div id="pressAction"></div>
+            </div>
+            <div class="actionBlock">
+              <h3>Hold action</h3>
+              <div id="holdAction"></div>
+            </div>
+          </section>
+
+          <section class="panel layersPanel">
+            <div class="panelTitle">
+              <h2>Layers</h2>
+              <button id="addLayerBtn">Add layer</button>
+            </div>
+            <div id="layersList" class="layersList"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+    <datalist id="iconOptions"></datalist>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

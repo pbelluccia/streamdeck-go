@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stream Deck Admin Mockups</title>
+    <style>
+      :root {
+        --bg: #101411;
+        --rail: #151a17;
+        --panel: #202721;
+        --panel2: #171d19;
+        --line: #3c463f;
+        --line2: #2f3933;
+        --text: #f5f0df;
+        --muted: #a8b3a8;
+        --accent: #d7ff64;
+        --blue: #75b7ff;
+        --danger: #ff765f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 24px;
+        background:
+          linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+          linear-gradient(0deg, rgba(255,255,255,.02) 1px, transparent 1px),
+          var(--bg);
+        background-size: 32px 32px;
+        color: var(--text);
+        font: 14px "Aptos", "Segoe UI", sans-serif;
+      }
+
+      h1 {
+        margin: 0 0 18px;
+        font-size: 22px;
+      }
+
+      .mocks {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .mock {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        background: rgba(32, 39, 33, .78);
+        box-shadow: 0 18px 50px rgba(0,0,0,.22);
+      }
+
+      .mockTitle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #19201b;
+      }
+
+      .mockTitle strong {
+        font-size: 16px;
+      }
+
+      .mockTitle span {
+        color: var(--muted);
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 180px 290px 1fr;
+        min-height: 440px;
+      }
+
+      .pages {
+        padding: 14px;
+        border-right: 1px solid var(--line);
+        background: var(--rail);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+        font-weight: 800;
+      }
+
+      .mark {
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border: 1px solid var(--accent);
+        border-radius: 7px;
+        color: var(--accent);
+      }
+
+      .page {
+        display: flex;
+        justify-content: space-between;
+        padding: 9px 10px;
+        margin-bottom: 6px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        color: var(--muted);
+      }
+
+      .page.active {
+        color: var(--text);
+        border-color: var(--accent);
+        background: rgba(215,255,100,.08);
+      }
+
+      .previewCol {
+        padding: 14px;
+        border-right: 1px solid var(--line);
+        background: rgba(17, 22, 19, .68);
+      }
+
+      .sectionHead {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        color: var(--muted);
+      }
+
+      .sectionHead strong {
+        color: var(--text);
+      }
+
+      .deck {
+        display: grid;
+        grid-template-columns: repeat(3, 76px);
+        gap: 7px;
+        width: max-content;
+        padding: 8px;
+        border-radius: 10px;
+        background: #050706;
+      }
+
+      .key {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 76px;
+        height: 76px;
+        border: 2px solid #111;
+        border-radius: 8px;
+        background: linear-gradient(140deg, #183456, #7a408f);
+        color: #fff;
+        font-size: 24px;
+        font-weight: 900;
+      }
+
+      .key.sel {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(215,255,100,.3);
+      }
+
+      .key small {
+        position: absolute;
+        top: 5px;
+        left: 6px;
+        font-size: 10px;
+      }
+
+      .pageCard {
+        margin-top: 12px;
+        padding: 10px;
+        border: 1px solid var(--line2);
+        border-radius: 8px;
+        background: var(--panel2);
+      }
+
+      .miniGrid {
+        display: grid;
+        grid-template-columns: 1fr 70px;
+        gap: 7px;
+      }
+
+      .field {
+        min-height: 30px;
+        padding: 7px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #0f1512;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .mainEditor {
+        padding: 14px;
+      }
+
+      .buttonHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--line2);
+      }
+
+      .tabs {
+        display: flex;
+        gap: 6px;
+      }
+
+      .tab {
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        color: var(--muted);
+      }
+
+      .tab.active {
+        color: #0f1512;
+        background: var(--accent);
+        border-color: var(--accent);
+        font-weight: 800;
+      }
+
+      .stack {
+        display: grid;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .layer {
+        display: grid;
+        grid-template-columns: 32px 160px 1fr 90px;
+        align-items: center;
+        gap: 10px;
+        min-height: 48px;
+        padding: 8px;
+        border: 1px solid var(--line2);
+        border-radius: 8px;
+        background: var(--panel2);
+      }
+
+      .layerIcon {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 7px;
+        background: #0e1411;
+        color: var(--accent);
+        font-weight: 900;
+      }
+
+      .layer strong {
+        display: block;
+      }
+
+      .layer span {
+        color: var(--muted);
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .action {
+        padding: 10px;
+        border: 1px solid var(--line2);
+        border-radius: 8px;
+        background: #151b17;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .btn {
+        padding: 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #0f1512;
+        font-weight: 800;
+      }
+
+      .btn.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #0f1512;
+      }
+
+      .mockB .app {
+        grid-template-columns: 180px 1fr 310px;
+      }
+
+      .buttonGrid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .buttonRow {
+        display: grid;
+        grid-template-columns: 56px 1fr 160px 150px;
+        gap: 10px;
+        align-items: center;
+        padding: 8px;
+        border: 1px solid var(--line2);
+        border-radius: 8px;
+        background: var(--panel2);
+      }
+
+      .miniKey {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 7px;
+        background: linear-gradient(140deg, #183456, #75438b);
+        font-weight: 900;
+      }
+
+      .inspector {
+        padding: 14px;
+        border-left: 1px solid var(--line);
+        background: rgba(17, 22, 19, .72);
+      }
+
+      .propGrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .mockC .app {
+        grid-template-columns: 180px 250px 1fr;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Stream Deck Admin: Visual Redesign Mockups</h1>
+
+    <div class="mocks">
+      <section class="mock">
+        <div class="mockTitle">
+          <strong>Mock A: Button Composer</strong>
+          <span>Todo el botón vive en un solo inspector: visual stack + acciones</span>
+        </div>
+        <div class="app">
+          <aside class="pages">
+            <div class="brand"><div class="mark">SD</div><span>Stream Deck</span></div>
+            <div class="page active"><span>main</span><b>6/6</b></div>
+            <div class="page"><span>access</span><b>6/6</b></div>
+            <div class="page"><span>color_effects</span><b>6/6</b></div>
+          </aside>
+          <section class="previewCol">
+            <div class="sectionHead"><strong>main</strong><span>Page</span></div>
+            <div class="deck">
+              <div class="key sel"><small>0</small>⏮</div>
+              <div class="key"><small>1</small>▶</div>
+              <div class="key"><small>2</small>⏭</div>
+              <div class="key"><small>3</small>☀<br><small style="top:auto;bottom:5px;left:13px">22C</small></div>
+              <div class="key"><small>4</small><span style="font-size:18px">Fri 22<br>16:51</span></div>
+              <div class="key"><small>5</small></div>
+            </div>
+            <div class="pageCard">
+              <div class="sectionHead"><strong>Page background</strong><span>media_art</span></div>
+              <div class="miniGrid">
+                <div class="field">Image path / media player</div>
+                <div class="field">10s</div>
+              </div>
+            </div>
+          </section>
+          <main class="mainEditor">
+            <div class="buttonHeader">
+              <strong>Button 0</strong>
+              <div class="tabs">
+                <div class="tab active">Visual</div>
+                <div class="tab">Press</div>
+                <div class="tab">Hold</div>
+              </div>
+            </div>
+            <div class="toolbar">
+              <div class="btn primary">+ Icon</div>
+              <div class="btn">+ Text</div>
+              <div class="btn">+ Image</div>
+              <div class="btn">+ Color</div>
+            </div>
+            <div class="stack">
+              <div class="layer">
+                <div class="layerIcon">BG</div>
+                <div><strong>Background color</strong><span>#1f2937 + blink</span></div>
+                <div class="field">Color / effect / repeat</div>
+                <div class="field">Base</div>
+              </div>
+              <div class="layer">
+                <div class="layerIcon">IC</div>
+                <div><strong>Icon</strong><span>previous.png</span></div>
+                <div class="field">Size 50, center, outline #111827</div>
+                <div class="field">Top layer</div>
+              </div>
+              <div class="layer">
+                <div class="layerIcon">TX</div>
+                <div><strong>Text</strong><span>optional label</span></div>
+                <div class="field">Text, size, position, color</div>
+                <div class="field">Hidden</div>
+              </div>
+            </div>
+            <div class="actions">
+              <div class="action"><strong>Press</strong><div class="field">media / previous / spotify</div></div>
+              <div class="action"><strong>Hold</strong><div class="field">none</div></div>
+            </div>
+          </main>
+        </div>
+      </section>
+
+      <section class="mock mockB">
+        <div class="mockTitle">
+          <strong>Mock B: Buttons Table + Inspector</strong>
+          <span>Vista operativa para editar muchos botones rápido</span>
+        </div>
+        <div class="app">
+          <aside class="pages">
+            <div class="brand"><div class="mark">SD</div><span>Stream Deck</span></div>
+            <div class="page active"><span>main</span><b>6/6</b></div>
+            <div class="page"><span>access</span><b>6/6</b></div>
+            <div class="page"><span>color_effects</span><b>6/6</b></div>
+          </aside>
+          <main class="mainEditor">
+            <div class="buttonHeader"><strong>Buttons on main</strong><span style="color:var(--muted)">Page background: media_art</span></div>
+            <div class="buttonGrid" style="margin-top:12px">
+              <div class="buttonRow"><div class="miniKey">⏮</div><strong>Button 0</strong><span>BG + icon</span><span>press: previous</span></div>
+              <div class="buttonRow"><div class="miniKey">▶</div><strong>Button 1</strong><span>media icon</span><span>press: play_pause</span></div>
+              <div class="buttonRow"><div class="miniKey">⏭</div><strong>Button 2</strong><span>BG + icon</span><span>press: next</span></div>
+              <div class="buttonRow"><div class="miniKey">☀</div><strong>Button 3</strong><span>weather</span><span>press: display mode</span></div>
+              <div class="buttonRow"><div class="miniKey">16:51</div><strong>Button 4</strong><span>datetime</span><span>press: command</span></div>
+              <div class="buttonRow"><div class="miniKey"></div><strong>Button 5</strong><span>empty</span><span>press: access</span></div>
+            </div>
+          </main>
+          <aside class="inspector">
+            <div class="buttonHeader"><strong>Button 0</strong><span style="color:var(--accent)">selected</span></div>
+            <div class="stack">
+              <div class="layer"><div class="layerIcon">BG</div><div><strong>Color</strong><span>#1f2937</span></div><div class="field">effect</div><div></div></div>
+              <div class="layer"><div class="layerIcon">IC</div><div><strong>Icon</strong><span>previous.png</span></div><div class="field">50px</div><div></div></div>
+            </div>
+            <div class="propGrid">
+              <div class="field">Press type</div>
+              <div class="field">media</div>
+              <div class="field">Command</div>
+              <div class="field">previous</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="mock mockC">
+        <div class="mockTitle">
+          <strong>Mock C: Canvas + Layer Inspector</strong>
+          <span>Más visual, preparado para drag/drop después</span>
+        </div>
+        <div class="app">
+          <aside class="pages">
+            <div class="brand"><div class="mark">SD</div><span>Stream Deck</span></div>
+            <div class="page active"><span>main</span><b>6/6</b></div>
+            <div class="page"><span>access</span><b>6/6</b></div>
+            <div class="page"><span>color_effects</span><b>6/6</b></div>
+          </aside>
+          <section class="previewCol">
+            <div class="sectionHead"><strong>Canvas</strong><span>Button 0</span></div>
+            <div class="key sel" style="width:180px;height:180px;font-size:54px;margin:auto">⏮</div>
+            <div class="toolbar">
+              <div class="btn primary">Icon</div>
+              <div class="btn">Text</div>
+              <div class="btn">Color</div>
+            </div>
+          </section>
+          <main class="mainEditor">
+            <div class="buttonHeader"><strong>Layer: Icon</strong><span style="color:var(--muted)">previous.png</span></div>
+            <div class="propGrid">
+              <div class="field">Icon</div>
+              <div class="field">previous.png</div>
+              <div class="field">Size</div>
+              <div class="field">50</div>
+              <div class="field">Position</div>
+              <div class="field">center</div>
+              <div class="field">Offset X</div>
+              <div class="field">0</div>
+              <div class="field">Offset Y</div>
+              <div class="field">0</div>
+              <div class="field">Outline</div>
+              <div class="field">#111827</div>
+            </div>
+            <div class="actions">
+              <div class="action"><strong>Press</strong><div class="field">media / previous</div></div>
+              <div class="action"><strong>Hold</strong><div class="field">none</div></div>
+            </div>
+          </main>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

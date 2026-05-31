@@ -1,0 +1,12 @@
+[Unit]
+Description=streamdeck-go daemon
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/streamdeck-go
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target
