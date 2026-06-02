@@ -506,7 +506,7 @@ Example:
 Animated GIF layers are cached after first load. The daemon refreshes animated pages at 10 FPS and only uploads keys whose rendered device image changed.
 
 
-If the Stream Deck is disconnected, the daemon backs off reconnect attempts up to 60 seconds. It does not start media watchers or render work until the device is available.
+If the Stream Deck is disconnected, the daemon backs off reconnect attempts up to 60 seconds. On Linux it also watches HID device changes, so a newly exposed `/dev/hidraw*` wakes the reconnect loop before the timer expires. It does not start media watchers or render work until the device is available.
 
 ## Development
 

@@ -26,6 +26,9 @@ func main() {
 }
 
 func runDeviceLoop(ctx context.Context, cfg app.Config) {
+	hidWakeup := newHIDWakeup(ctx)
+	defer hidWakeup.Close()
+
 	backoff := 2 * time.Second
 	for {
 		select {
@@ -36,8 +39,8 @@ func runDeviceLoop(ctx context.Context, cfg app.Config) {
 
 		deckDevice, err := deck.Open(cfg.DevicePath, cfg.DeviceModel)
 		if err != nil {
-			fmt.Printf("StreamDeck unavailable: %v; retrying in %s\n", err, backoff)
-			sleepContext(ctx, backoff)
+			fmt.Printf("StreamDeck unavailable: %v; retrying within %s\n", err, backoff)
+			sleepUntilDeviceRetry(ctx, backoff, hidWakeup.C())
 			backoff = nextBackoff(backoff)
 			continue
 		}
@@ -53,8 +56,8 @@ func runDeviceLoop(ctx context.Context, cfg app.Config) {
 		if errors.Is(err, context.Canceled) {
 			return
 		}
-		fmt.Printf("StreamDeck disconnected or failed: %v; reconnecting in %s\n", err, backoff)
-		sleepContext(ctx, backoff)
+		fmt.Printf("StreamDeck disconnected or failed: %v; reconnecting within %s\n", err, backoff)
+		sleepUntilDeviceRetry(ctx, backoff, hidWakeup.C())
 		backoff = nextBackoff(backoff)
 	}
 }
@@ -64,12 +67,13 @@ func fatal(err error) {
 	os.Exit(1)
 }
 
-func sleepContext(ctx context.Context, duration time.Duration) {
+func sleepUntilDeviceRetry(ctx context.Context, duration time.Duration, wakeups <-chan struct{}) {
 	timer := time.NewTimer(duration)
 	defer timer.Stop()
 	select {
 	case <-timer.C:
 	case <-ctx.Done():
+	case <-wakeups:
 	}
 }
 
