@@ -139,6 +139,11 @@ def clear_notification() -> None:
     ])
 
 
+def clear_waiting(session_id: str) -> None:
+    if clear_if_waiting(session_id):
+        clear_notification()
+
+
 def main() -> int:
     try:
         event = json.load(sys.stdin)
@@ -148,14 +153,20 @@ def main() -> int:
     session_id = event.get("session_id") or "global"
     name = event.get("hook_event_name", "")
 
-    if name == "Notification":
-        notification_type = event.get("notification_type") or ""
-        if notification_type == "permission_prompt":
-            color = "#f59e0b"
-            remember(session_id, "waiting", event)
-        else:
-            color = "#f59e0b"
-        notify("Claude", "", color)
+    # PermissionRequest is the authoritative "needs permission" signal. It fires
+    # when the approval dialog appears and is matchable by tool name. We do not
+    # rely on the Notification event for this: its stdin payload does not carry
+    # a notification_type field, so permission and idle notifications are
+    # indistinguishable there.
+    if name == "PermissionRequest":
+        remember(session_id, "waiting", event)
+        notify("Claude", "", "#f59e0b")
+        return 0
+
+    # Any of these means the gated tool resolved (ran, errored, or was denied),
+    # so the pending permission alert must come down.
+    if name in ("PostToolUse", "PostToolUseFailure", "PermissionDenied"):
+        clear_waiting(session_id)
         return 0
 
     if name == "Stop":
@@ -167,16 +178,14 @@ def main() -> int:
         notify("Claude", "", "#dc2626")
         return 0
 
-    if name == "PostToolUse":
-        if clear_if_waiting(session_id):
-            clear_notification()
-        return 0
-
     if name == "UserPromptSubmit":
         forget(session_id)
         clear_notification()
         return 0
 
+    # Notification (idle_prompt, auth_success, elicitation_*) is intentionally
+    # ignored. Reacting to idle_prompt used to repaint the deck with a
+    # permission-looking alert after the turn had already finished.
     return 0
 
 

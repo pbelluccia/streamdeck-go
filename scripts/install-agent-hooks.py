@@ -138,11 +138,10 @@ def install_claude(path: Path, command: str) -> None:
     remove_command_from_all_events(data, command)
     add_event_hook(
         data,
-        "Notification",
+        "PermissionRequest",
         {
-            "matcher": "",
             "hooks": [
-                command_hook(command),
+                command_hook(command, "Notificando aprobacion en Stream Deck"),
             ],
         },
         command,
@@ -167,16 +166,17 @@ def install_claude(path: Path, command: str) -> None:
         },
         command,
     )
-    add_event_hook(
-        data,
-        "PostToolUse",
-        {
-            "hooks": [
-                command_hook(command),
-            ],
-        },
-        command,
-    )
+    for event in ("PostToolUse", "PostToolUseFailure", "PermissionDenied"):
+        add_event_hook(
+            data,
+            event,
+            {
+                "hooks": [
+                    command_hook(command),
+                ],
+            },
+            command,
+        )
     add_event_hook(
         data,
         "UserPromptSubmit",

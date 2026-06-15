@@ -252,7 +252,7 @@ The default socket path is `$XDG_RUNTIME_DIR/streamdeck-go.sock`. If `XDG_RUNTIM
 Available hook flags:
 
 - `--install-codex-hooks`: installs `~/.codex/hooks.json` entries for `PermissionRequest`, `PostToolUse`, `UserPromptSubmit`, and `Stop`.
-- `--install-claude-hooks`: installs `~/.claude/settings.json` entries for `Notification`, `PostToolUse`, `UserPromptSubmit`, `Stop`, and `StopFailure`.
+- `--install-claude-hooks`: installs `~/.claude/settings.json` entries for `PermissionRequest`, `PostToolUse`, `PostToolUseFailure`, `PermissionDenied`, `UserPromptSubmit`, `Stop`, and `StopFailure`.
 - `--install-agent-hooks`: installs both.
 
 The installer preserves existing hook configuration and only adds or replaces the Stream Deck hook commands. Both agents use the same notifier command:
