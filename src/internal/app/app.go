@@ -37,6 +37,7 @@ type App struct {
 	currentPage  string
 	mode         int
 	brightness   byte
+	iconsHidden  bool
 	mediaState   MediaState
 	keyStates    []keyState
 	keyHashes    [][sha256.Size]byte
@@ -45,6 +46,8 @@ type App struct {
 	inputMu      sync.Mutex
 	pageTimer    *time.Timer
 	pageTimerMu  sync.Mutex
+	iconTimer    *time.Timer
+	iconTimerMu  sync.Mutex
 	refreshMu    sync.Mutex
 }
 
@@ -99,6 +102,7 @@ func (a *App) Run(ctx context.Context) error {
 		return err
 	}
 	a.resetPageTimeout(runCtx)
+	a.resetIconTimeout(runCtx)
 	mediaUpdates := make(chan MediaState, 4)
 	go a.media.Watch(runCtx, mediaUpdates)
 	deckErrors := make(chan error, 1)
@@ -154,6 +158,13 @@ func (a *App) stopTimers() {
 	}
 	a.pageTimerMu.Unlock()
 
+	a.iconTimerMu.Lock()
+	if a.iconTimer != nil {
+		a.iconTimer.Stop()
+		a.iconTimer = nil
+	}
+	a.iconTimerMu.Unlock()
+
 	a.inputMu.Lock()
 	a.ensureKeyBuffersLocked()
 	for key := range a.keyStates {
@@ -180,6 +191,7 @@ func (a *App) HandleKeyEvent(ctx context.Context, key int, pressed bool) {
 
 func (a *App) handleKeyDown(ctx context.Context, key int) {
 	fmt.Printf("Button %d pressed\n", key)
+	a.noteIconActivity(ctx)
 	page := a.page()
 	if key < 0 || key >= len(page.Buttons) {
 		fmt.Println("No action assigned for this key.")
@@ -248,6 +260,7 @@ func (a *App) fireHold(ctx context.Context, key int) {
 func (a *App) handleActionAndRefresh(ctx context.Context, action Action) {
 	a.handleAction(ctx, action)
 	a.resetPageTimeout(ctx)
+	a.resetIconTimeout(ctx)
 	if a.deck == nil {
 		return
 	}
@@ -335,6 +348,56 @@ func (a *App) returnToStartPage(ctx context.Context, expectedPage string) {
 	}
 	a.pageTimer = nil
 	a.pageTimerMu.Unlock()
+
+	if a.deck == nil {
+		return
+	}
+	if err := a.Refresh(ctx); err != nil {
+		fmt.Println("Refresh error:", err)
+	}
+}
+
+func (a *App) noteIconActivity(ctx context.Context) {
+	a.resetIconTimeout(ctx)
+	if a.deck == nil {
+		return
+	}
+	if err := a.Refresh(ctx); err != nil {
+		fmt.Println("Refresh error:", err)
+	}
+}
+
+func (a *App) resetIconTimeout(ctx context.Context) {
+	pageID, page := a.currentPageSnapshot()
+
+	a.iconTimerMu.Lock()
+	if a.iconTimer != nil {
+		a.iconTimer.Stop()
+		a.iconTimer = nil
+	}
+	a.setIconsHidden(false)
+	if pageID == "" || page.IconTimeoutSeconds <= 0 {
+		a.iconTimerMu.Unlock()
+		return
+	}
+
+	timeout := time.Duration(page.IconTimeoutSeconds) * time.Second
+	a.iconTimer = time.AfterFunc(timeout, func() {
+		a.hideIconsForPage(ctx, pageID)
+	})
+	a.iconTimerMu.Unlock()
+}
+
+func (a *App) hideIconsForPage(ctx context.Context, expectedPage string) {
+	pageID, page := a.currentPageSnapshot()
+	if pageID != expectedPage || page.IconTimeoutSeconds <= 0 {
+		return
+	}
+
+	a.iconTimerMu.Lock()
+	a.setIconsHidden(true)
+	a.iconTimer = nil
+	a.iconTimerMu.Unlock()
 
 	if a.deck == nil {
 		return
@@ -504,6 +567,18 @@ func (a *App) currentBrightness() byte {
 	return a.brightness
 }
 
+func (a *App) setIconsHidden(hidden bool) {
+	a.stateMu.Lock()
+	defer a.stateMu.Unlock()
+	a.iconsHidden = hidden
+}
+
+func (a *App) iconLayersHidden() bool {
+	a.stateMu.RLock()
+	defer a.stateMu.RUnlock()
+	return a.iconsHidden
+}
+
 func (a *App) setMediaState(state MediaState) {
 	a.stateMu.Lock()
 	defer a.stateMu.Unlock()
@@ -517,13 +592,13 @@ func (a *App) primaryMediaStatus() string {
 }
 
 func (a *App) renderPage(ctx context.Context, page Page) render.Page {
+	hideIconLayers := a.iconLayersHidden()
 	renderPage := render.Page{
 		Background: page.Background,
 		Buttons:    make([]render.Button, len(page.Buttons)),
 	}
 	for i, button := range page.Buttons {
-		layers := make([]render.Layer, len(button.Layers))
-		copy(layers, button.Layers)
+		layers := visibleLayers(button.Layers, hideIconLayers)
 		for j := range layers {
 			if layers[j].Type == "media_play_pause" {
 				layers[j].Playback = a.mediaStateFor(ctx, layers[j].Player).Status
@@ -534,6 +609,26 @@ func (a *App) renderPage(ctx context.Context, page Page) render.Page {
 		}
 	}
 	return renderPage
+}
+
+func visibleLayers(layers []render.Layer, hideIconLayers bool) []render.Layer {
+	visible := make([]render.Layer, 0, len(layers))
+	for _, layer := range layers {
+		if hideIconLayers && isIconTimeoutLayer(layer.Type) {
+			continue
+		}
+		visible = append(visible, layer)
+	}
+	return visible
+}
+
+func isIconTimeoutLayer(layerType string) bool {
+	switch layerType {
+	case "icon", "media_play_pause", "weather", "datetime", "text":
+		return true
+	default:
+		return false
+	}
 }
 
 func (a *App) mediaStateFor(ctx context.Context, player string) MediaState {

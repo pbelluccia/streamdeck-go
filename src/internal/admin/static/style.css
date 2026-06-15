@@ -386,7 +386,7 @@ label span {
 }
 
 .pageFields {
-  grid-template-columns: 118px 70px 118px 92px 128px minmax(160px, 1fr);
+  grid-template-columns: 118px 86px 118px 118px minmax(110px, 128px) minmax(160px, 1fr);
   align-items: end;
   padding: 8px 10px;
 }

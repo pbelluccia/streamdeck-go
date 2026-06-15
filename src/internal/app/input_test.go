@@ -71,6 +71,64 @@ func TestPageTimeoutResetsOnSecondaryPageActivity(t *testing.T) {
 	}
 }
 
+func TestIconTimeoutHidesOnlyIconAndTextLayers(t *testing.T) {
+	app := testInputApp(50)
+	app.iconsHidden = true
+	page := Page{
+		Buttons: []Button{
+			{
+				Layers: []render.Layer{
+					{Type: "color", Color: "#000000"},
+					{Type: "icon", Icon: "play.png"},
+					{Type: "media_play_pause"},
+					{Type: "text", Text: "Play"},
+					{Type: "datetime", Format: "HH:mm"},
+					{Type: "weather"},
+					{Type: "image", Path: "/tmp/still.png"},
+					{Type: "animation", Path: "/tmp/move.gif"},
+				},
+			},
+		},
+	}
+
+	renderPage := app.renderPage(context.Background(), page)
+	got := layerTypes(renderPage.Buttons[0].Layers)
+	want := []string{"color", "image", "animation"}
+	if len(got) != len(want) {
+		t.Fatalf("visible layer types = %v, want %v", got, want)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("visible layer types = %v, want %v", got, want)
+		}
+	}
+}
+
+func TestIconTimeoutHidesAfterInactivity(t *testing.T) {
+	app := testInputApp(50)
+	app.setCurrentPage("temporary")
+
+	app.resetIconTimeout(context.Background())
+	time.Sleep(1100 * time.Millisecond)
+
+	if !app.iconLayersHidden() {
+		t.Fatal("icons were not hidden after icon timeout")
+	}
+	if got := testCurrentPage(app); got != "temporary" {
+		t.Fatalf("currentPage = %q, want temporary", got)
+	}
+}
+
+func TestIconTimeoutRestoresOnButtonPress(t *testing.T) {
+	app := testInputApp(50)
+	app.iconsHidden = true
+	app.HandleKeyEvent(context.Background(), 0, true)
+
+	if app.iconLayersHidden() {
+		t.Fatal("icons remained hidden after button press")
+	}
+}
+
 func TestBrightnessActionUpDownSetAndClamp(t *testing.T) {
 	app := testInputApp(50)
 	app.brightness = 20
@@ -144,7 +202,8 @@ func testInputApp(holdMS int) *App {
 		"press": {},
 		"hold":  {},
 		"temporary": {
-			TimeoutSeconds: 1,
+			TimeoutSeconds:     1,
+			IconTimeoutSeconds: 1,
 		},
 	}
 	app := &App{
@@ -154,4 +213,12 @@ func testInputApp(holdMS int) *App {
 	}
 	app.ensureKeyBuffers()
 	return app
+}
+
+func layerTypes(layers []render.Layer) []string {
+	types := make([]string, len(layers))
+	for i, layer := range layers {
+		types[i] = layer.Type
+	}
+	return types
 }

@@ -27,6 +27,7 @@ func TestLoadJSONConfigAppliesSettingsAndPages(t *testing.T) {
 		"pages": {
 			"main": {
 				"timeout_seconds": 7,
+				"icon_timeout_seconds": 12,
 				"background": { "type": "media_art", "player": "vlc", "mode": "fill" },
 				"buttons": {
 					"0": {
@@ -117,6 +118,9 @@ func TestLoadJSONConfigAppliesSettingsAndPages(t *testing.T) {
 	}
 	if got := cfg.Pages["main"].TimeoutSeconds; got != 7 {
 		t.Fatalf("page timeout = %d, want 7", got)
+	}
+	if got := cfg.Pages["main"].IconTimeoutSeconds; got != 12 {
+		t.Fatalf("page icon timeout = %d, want 12", got)
 	}
 }
 

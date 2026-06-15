@@ -14,9 +14,10 @@ import (
 )
 
 type Page struct {
-	TimeoutSeconds int               `json:"timeout_seconds,omitempty"`
-	Background     render.Background `json:"background"`
-	Buttons        Buttons           `json:"buttons"`
+	TimeoutSeconds     int               `json:"timeout_seconds,omitempty"`
+	IconTimeoutSeconds int               `json:"icon_timeout_seconds,omitempty"`
+	Background         render.Background `json:"background"`
+	Buttons            Buttons           `json:"buttons"`
 }
 
 type Buttons []Button

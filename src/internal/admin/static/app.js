@@ -27,6 +27,7 @@ const dom = {
   iconOptions: q("#iconOptions"),
   startPage: q("#startPage"),
   timeout: q("#pageTimeout"),
+  iconTimeout: q("#pageIconTimeout"),
   backgroundType: q("#backgroundType"),
   backgroundColorPicker: q("#backgroundColorPicker"),
   backgroundColor: q("#backgroundColor"),
@@ -96,6 +97,7 @@ for (const input of [
   dom.settingWeatherRefresh,
   dom.startPage,
   dom.timeout,
+  dom.iconTimeout,
   dom.backgroundType,
   dom.backgroundPath,
   dom.backgroundMode,
@@ -234,6 +236,7 @@ function renderPageEditor() {
   replaceOptions(dom.startPage, pageIds());
   dom.startPage.value = state.config.settings.start_page;
   dom.timeout.value = page.timeout_seconds || 0;
+  dom.iconTimeout.value = page.icon_timeout_seconds || 0;
   dom.backgroundType.value = page.background.type || "solid";
   dom.backgroundColor.value = page.background.color || "";
   setColorPickerValue(dom.backgroundColorPicker, dom.backgroundColor.value, "#111827");
@@ -301,6 +304,7 @@ function syncSimpleFields() {
   setText(settings.weather, "location", dom.settingWeatherLocation.value);
   setNumber(settings.weather, "refresh_minutes", dom.settingWeatherRefresh.value);
   page.timeout_seconds = numberValue(dom.timeout, 0);
+  page.icon_timeout_seconds = numberValue(dom.iconTimeout, 0);
   page.background ||= {};
   setText(page.background, "type", dom.backgroundType.value);
   setText(page.background, "color", dom.backgroundColor.value);
